@@ -78,7 +78,12 @@ export function buildUserPrompt(profile: Profile): string {
   }
 
   // 把技能数组拼接成中文顿号分隔的字符串；如果用户没选技能，给个默认文案避免空值
-  const skillsText = profile.skills.length > 0 ? profile.skills.join('、') : '暂无明确技能'
+  // 优先使用 skillLabels（中文名称），没有则回退到 skills 原始值
+  const skillsText = profile.skills.length > 0
+    ? (profile.skillLabels && profile.skillLabels.length > 0
+        ? profile.skillLabels.join('、')
+        : profile.skills.join('、'))
+    : '暂无明确技能'
 
   return `请根据以下用户画像生成 3 个个性化副业方案：
 

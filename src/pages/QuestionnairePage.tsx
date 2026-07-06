@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowRight, RotateCcw, CheckCircle2 } from 'lucide-react'
 // 引入问卷题目配置和风险偏好文案映射，题目内容集中管理便于维护
 import { QUESTIONS, RISK_LABELS } from '@/constants/questionnaire'
+// 引入技能值转中文名称的工具函数，提交时把英文标识翻译成中文发给 AI
+import { getSkillLabels } from '@/constants/careers'
 // 引入本地存储 Hook，把草稿自动存到浏览器 localStorage，刷新页面不丢失
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 // 引入全局状态仓库，提交时把画像存入全局状态供结果页使用
@@ -20,6 +22,8 @@ import { useAppStore } from '@/store/appStore'
 import { SkillSelect } from '@/components/questionnaire/SkillSelect'
 import { SliderGroup } from '@/components/questionnaire/SliderGroup'
 import { RadioCard } from '@/components/questionnaire/RadioCard'
+// 引入"查看更多职业"入口链接，显示在技能多选题下方，可跳转到职业浏览页选更多职业
+import { CareerBrowserLink } from '@/components/questionnaire/CareerBrowserLink'
 // 引入画像的数据类型定义
 import type { Profile } from '@/types'
 
@@ -54,7 +58,9 @@ export function QuestionnairePage() {
   // 提交：校验通过后把草稿写入全局状态并跳转到结果页
   const handleSubmit = () => {
     if (!canSubmit) return
-    setProfile(draft)
+    // 把技能的英文标识翻译成中文名称，一起存入画像，后端 AI 提示词会优先使用中文名称
+    const profileWithLabels = { ...draft, skillLabels: getSkillLabels(draft.skills) }
+    setProfile(profileWithLabels)
     navigate('/results')
   }
 
@@ -95,11 +101,15 @@ export function QuestionnairePage() {
             <div className="pl-10">
               {/* 根据题目类型渲染不同的交互组件 */}
               {q.type === 'multi-select' && (
-                <SkillSelect
-                  options={q.options!}
-                  value={draft.skills}
-                  onChange={(v) => update('skills', v)}
-                />
+                <>
+                  <SkillSelect
+                    options={q.options!}
+                    value={draft.skills}
+                    onChange={(v) => update('skills', v)}
+                  />
+                  {/* 技能网格下方放一个低调的链接，引导用户去职业浏览页选更多职业 */}
+                  <CareerBrowserLink />
+                </>
               )}
               {q.type === 'slider' && (
                 <SliderGroup

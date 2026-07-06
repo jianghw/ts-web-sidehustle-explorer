@@ -14,6 +14,8 @@ import { ProsConsSection } from '@/components/detail/ProsConsSection'
 import { ChannelsSection } from '@/components/detail/ChannelsSection'
 import { GuideTimeline } from '@/components/detail/GuideTimeline'
 import { LearningResourcesSection } from '@/components/detail/LearningResourcesSection'
+// 引入副业发展路径区块（Feature 3）：AI 生成从起步到大师的发展路径树
+import { SideHustleTreeSection } from '@/components/tree/SideHustleTreeSection'
 import { ActionToolbar } from '@/components/detail/ActionToolbar'
 
 export function DetailPage() {
@@ -45,6 +47,8 @@ export function DetailPage() {
       {plan.learningResources && plan.learningResources.length > 0 && (
         <LearningResourcesSection resources={plan.learningResources} />
       )}
+      {/* 副业发展路径（Feature 3）：可折叠区块，点击生成由 AI 画出发展路径树 */}
+      <SideHustleTreeSection plan={plan} />
 
       {/* 底部操作栏：调整画像 / 换一批 / 收藏，固定悬浮在底部 */}
       <ActionToolbar plan={plan} />

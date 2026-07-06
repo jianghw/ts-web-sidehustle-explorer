@@ -16,10 +16,14 @@ import { Footer } from '@/components/layout/Footer'
 import { RetryBoundary } from '@/components/common/RetryBoundary'
 // 问卷填写页面：用户在这里回答几个问题（技能、时间、收入目标等），作为生成方案的依据
 import { QuestionnairePage } from '@/pages/QuestionnairePage'
+// 职业浏览页面：按分类浏览全部职业并勾选，选好后带回问卷页填入技能栏
+import { CareerBrowserPage } from '@/pages/CareerBrowserPage'
 // 方案结果列表页：展示 AI 根据问卷生成的多个副业方案，供用户浏览比较
 import { ResultsPage } from '@/pages/ResultsPage'
 // 方案详情页：展示某个副业方案的完整信息（操作步骤、赚钱渠道、学习资源等）
 import { DetailPage } from '@/pages/DetailPage'
+// 职业洞察页：展示 AI 分析的行业趋势、新型副业预测与职业技能分析（Feature 2）
+import { CareerInsightsPage } from '@/pages/CareerInsightsPage'
 
 /**
  * 根组件 App
@@ -39,10 +43,14 @@ export default function App() {
           <Routes>
             {/* 首页：问卷填写。用户进入应用后看到的第一个页面 */}
             <Route path="/" element={<QuestionnairePage />} />
+            {/* 职业浏览页：从问卷页点"查看更多职业"进入，按分类浏览并勾选职业 */}
+            <Route path="/careers" element={<CareerBrowserPage />} />
             {/* 结果页：展示生成的方案列表。用户提交问卷后跳转到此 */}
             <Route path="/results" element={<ResultsPage />} />
             {/* 详情页：查看某个方案的完整内容。:id 是动态参数，代表方案编号 */}
             <Route path="/detail/:id" element={<DetailPage />} />
+            {/* 职业洞察页：展示 AI 分析的行业趋势与新型副业预测（Feature 2） */}
+            <Route path="/insights" element={<CareerInsightsPage />} />
             {/* 兜底路由：当用户访问了不存在的网址时，默认回到问卷首页，避免显示空白页 */}
             <Route path="*" element={<QuestionnairePage />} />
           </Routes>

@@ -12,6 +12,10 @@ import http from 'node:http'
 // 引入正式的接口处理逻辑（generate.ts 导出的 handler），本地开发服务器直接复用这套逻辑，
 // 这样能保证本地和线上的行为完全一致，不会出现「本地能跑线上不行」的问题
 import handler from './generate'
+// 引入职业洞察分析接口（Feature 2）
+import analyzeHandler from './analyze'
+// 引入副业发展路径树接口（Feature 3）
+import treeHandler from './tree'
 
 // 加载本地环境变量文件 .env.local，里面通常存着 ARK_API_KEY（豆包密钥）等敏感信息
 // 这个文件不会提交到 git，避免密钥泄露
@@ -39,8 +43,18 @@ const server = http.createServer(async (req, res) => {
 
   const url = req.url || ''
 
-  // 只处理 /api/generate 开头的请求，其他路径返回 404
-  if (url.startsWith('/api/generate')) {
+  // 根据请求路径选择对应的处理函数
+  // 三个接口共用同一套请求体读取和响应处理逻辑
+  const routeHandler = url.startsWith('/api/generate')
+    ? handler
+    : url.startsWith('/api/analyze')
+      ? analyzeHandler
+      : url.startsWith('/api/tree')
+        ? treeHandler
+        : null
+
+  // 匹配到已知路由则处理，否则返回 404
+  if (routeHandler) {
     try {
       // Node 的 http 模块中，请求体是流式数据（stream），需要手动拼接
       // 这里用 for-await 循环收集所有数据块（chunk），再合并成完整字符串
@@ -51,7 +65,7 @@ const server = http.createServer(async (req, res) => {
       const body = Buffer.concat(chunks).toString('utf-8')
 
       // 把 Node 原生请求对象转换成 Web 标准的 Request 对象
-      // 因为 generate.ts 里的 handler 用的是 Web 标准 Request/Response，
+      // 因为接口处理函数用的是 Web 标准 Request/Response，
       // 必须做这层适配才能让本地服务器和线上共用同一套处理逻辑
       const request = new Request(`http://localhost:${PORT}${url}`, {
         method: req.method || 'POST',
@@ -59,8 +73,8 @@ const server = http.createServer(async (req, res) => {
         body: body || '{}',
       })
 
-      // 调用正式的 handler 处理请求，拿到 Web 标准 Response
-      const response = await handler.fetch(request)
+      // 调用对应的 handler 处理请求，拿到 Web 标准 Response
+      const response = await routeHandler.fetch(request)
       // 把 Response 的内容读成文本
       const text = await response.text()
 
@@ -84,6 +98,6 @@ const server = http.createServer(async (req, res) => {
 // 启动服务器，开始监听指定端口
 server.listen(PORT, () => {
   console.log(`\n[dev] 本地 BFF 服务已启动: http://localhost:${PORT}`)
-  console.log(`[dev] 路由: POST /api/generate`)
+  console.log(`[dev] 路由: POST /api/generate | POST /api/analyze | POST /api/tree`)
   console.log(`[dev] 等待 vite 代理请求...\n`)
 })

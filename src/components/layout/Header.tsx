@@ -6,13 +6,13 @@
 
 // react-router-dom 是 React 的路由库：Link 用于做无刷新跳转，useLocation 用于读取当前网址
 import { Link, useLocation } from 'react-router-dom'
-// Sparkles 星星图标，作为产品 Logo 的视觉元素
-import { Sparkles } from 'lucide-react'
+// Sparkles 星星图标（Logo），TrendingUp 趋势上升图标（职业洞察入口）
+import { Sparkles, TrendingUp } from 'lucide-react'
 
 // 定义三个步骤及其匹配规则。用 match 函数而非简单相等判断，是因为详情页路径可能带参数（如 /detail/xxx）
 const STEPS = [
-  // 第一步"画像"：只在首页时高亮
-  { path: '/', label: '画像', match: (p: string) => p === '/' },
+  // 第一步"画像"：首页和职业浏览页都属于这一步
+  { path: '/', label: '画像', match: (p: string) => p === '/' || p.startsWith('/careers') },
   // 第二步"方案"：所有以 /results 开头的路径都算这一步
   { path: '/results', label: '方案', match: (p: string) => p.startsWith('/results') },
   // 第三步"详情"：所有以 /detail 开头的路径都算这一步
@@ -36,30 +36,45 @@ export function Header() {
           </span>
           <span className="text-base font-bold tracking-tight">人生副业体验器</span>
         </Link>
-        {/* 步骤指示器：小屏幕下隐藏，避免拥挤 */}
-        <div className="hidden items-center gap-2 sm:flex">
-          {STEPS.map((s, i) => (
-            <div key={s.path} className="flex items-center gap-2">
-              {/* 根据步骤是否完成/进行中/未开始，显示不同颜色：当前=主色实心，已完成=浅色，未开始=灰色 */}
-              <span
-                className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition ${
-                  i === activeIdx
-                    ? 'bg-brand-500 text-white'
-                    : i < activeIdx
-                      ? 'bg-brand-100 text-brand-600'
-                      : 'bg-slate-100 text-slate-400'
-                }`}
-              >
-                {i + 1}
-              </span>
-              {/* 当前步骤文字加粗高亮，其余步骤弱化显示 */}
-              <span className={`text-xs ${i === activeIdx ? 'font-semibold text-slate-700' : 'text-slate-400'}`}>
-                {s.label}
-              </span>
-              {/* 步骤之间用斜杠分隔，最后一个步骤后面不显示分隔符 */}
-              {i < STEPS.length - 1 && <span className="text-slate-300">/</span>}
-            </div>
-          ))}
+        {/* 右侧导航区：步骤指示器 + 职业洞察入口 */}
+        <div className="flex items-center gap-4">
+          {/* 步骤指示器：小屏幕下隐藏，避免拥挤 */}
+          <div className="hidden items-center gap-2 sm:flex">
+            {STEPS.map((s, i) => (
+              <div key={s.path} className="flex items-center gap-2">
+                {/* 根据步骤是否完成/进行中/未开始，显示不同颜色：当前=主色实心，已完成=浅色，未开始=灰色 */}
+                <span
+                  className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition ${
+                    i === activeIdx
+                      ? 'bg-brand-500 text-white'
+                      : i < activeIdx
+                        ? 'bg-brand-100 text-brand-600'
+                        : 'bg-slate-100 text-slate-400'
+                  }`}
+                >
+                  {i + 1}
+                </span>
+                {/* 当前步骤文字加粗高亮，其余步骤弱化显示 */}
+                <span className={`text-xs ${i === activeIdx ? 'font-semibold text-slate-700' : 'text-slate-400'}`}>
+                  {s.label}
+                </span>
+                {/* 步骤之间用斜杠分隔，最后一个步骤后面不显示分隔符 */}
+                {i < STEPS.length - 1 && <span className="text-slate-300">/</span>}
+              </div>
+            ))}
+          </div>
+          {/* 职业洞察入口：Feature 2 的导航入口，点击进入 AI 趋势分析页 */}
+          <Link
+            to="/insights"
+            className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium transition ${
+              pathname.startsWith('/insights')
+                ? 'bg-brand-50 text-brand-600'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+            }`}
+          >
+            <TrendingUp size={14} />
+            <span className="hidden sm:inline">职业洞察</span>
+          </Link>
         </div>
       </div>
     </header>

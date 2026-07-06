@@ -15,6 +15,8 @@
 export interface Profile {
   /** 技能特长列表，如 ['编程', '写作'] */
   skills: string[]
+  /** 技能的中文名称列表（可选）：与 skills 一一对应，发给 AI 时用中文更准确 */
+  skillLabels?: string[]
   /** 每天可用于副业的小时数 */
   availableHours: number
   /** 期望月收入目标（元） */

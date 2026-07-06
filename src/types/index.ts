@@ -10,6 +10,8 @@
  */
 export interface Profile {
   skills: string[]          // 技能特长（多选）：用户擅长什么，决定了推荐哪些方向的副业
+  // 技能的中文名称列表（可选）：与 skills 一一对应，发给后端 AI 时用中文更准确
+  skillLabels?: string[]
   availableHours: number    // 每日可投入时间（小时）：影响推荐的方案是否现实可行
   incomeGoal: number        // 月期望收入（元）：用于筛选符合预期的方案档次
   // 风险偏好：决定推荐方案的稳健程度。

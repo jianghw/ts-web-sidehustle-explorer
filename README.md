@@ -11,12 +11,15 @@
 ## 功能
 
 1. **画像问卷**：技能多选 / 每日可用时间 / 月收入目标 / 风险偏好 / 启动资金
-2. **AI 生成**：BFF 组装 Prompt 调用豆包（JSON mode 结构化输出），返回 3 个差异化方案（稳赚型 / 成长型 / 爆发型）
-3. **方案展示**：匹配度环形评分、难度标签、收入预期、技能标签
-4. **详情页**：优缺点分析、赚钱渠道（含门槛/类型）、操作指南（可折叠步骤，含工具和时长）
-5. **渠道总览**：跨方案去重汇总，标注每个渠道出现在哪些方案中
-6. **操作工具栏**：换一批（重新生成）/ 调整画像（回填草稿）/ 收藏（localStorage 持久化）
-7. **状态兜底**：加载动画（轮播文案）、骨架屏、错误重试、Error Boundary、后端限流
+2. **职业浏览**（新增）：8 大类 60+ 细分职业分类浏览，支持搜索、按分类筛选，点击"查看更多职业"进入
+3. **AI 生成**：BFF 组装 Prompt 调用豆包（JSON mode 结构化输出），返回 3 个差异化方案（稳赚型 / 成长型 / 爆发型）
+4. **方案展示**：匹配度环形评分、难度标签、收入预期、技能标签
+5. **详情页**：优缺点分析、赚钱渠道（含门槛/类型）、操作指南（可折叠步骤，含工具和时长）
+6. **副业发展路径树**（新增）：详情页可一键生成 AI 发展路径树，展示从起步到大师的多分支成长路线
+7. **职业洞察**（新增）：AI 分析行业趋势、预测新型副业方向、深度分析职业技能，支持从结果页或导航栏进入
+8. **渠道总览**：跨方案去重汇总，标注每个渠道出现在哪些方案中
+9. **操作工具栏**：换一批（重新生成）/ 调整画像（回填草稿）/ 收藏（localStorage 持久化）
+10. **状态兜底**：加载动画（轮播文案）、骨架屏、错误重试、Error Boundary、后端限流
 
 ## 本地启动
 
@@ -275,24 +278,30 @@ Vercel 为每个项目分配的默认域名是随机生成的。本项目的生�
 │   ├── _lib/                   # 共享代码（下划线前缀，不被 Vercel 识别为 Function）
 │   │   ├── ark.ts              # 豆包 API 封装（OpenAI SDK 兼容）
 │   │   ├── prompt.ts           # System / User Prompt 构建
+│   │   ├── careerPrompt.ts     # 职业洞察与路径树 Prompt 构建（新增）
+│   │   ├── careerMock.ts       # 职业洞察与路径树 Mock 数据（新增）
 │   │   ├── schemas.ts          # 运行时类型校验与容错
 │   │   ├── mock.ts             # Mock 数据（开发模式 fallback）
 │   │   └── types.ts            # 后端类型定义
 │   ├── generate.ts             # POST /api/generate 主接口
+│   ├── analyze.ts              # POST /api/analyze 职业洞察分析（新增）
+│   ├── tree.ts                 # POST /api/tree 副业发展路径树（新增）
 │   └── _dev.ts                 # 本地开发 HTTP 服务器（端口 3001）
 ├── src/
 │   ├── components/
 │   │   ├── common/             # 通用组件（LoadingScreen / ErrorState / SkeletonCard / RetryBoundary）
 │   │   ├── detail/             # 详情页组件（SummaryHeader / ProsConsSection / ChannelsSection / GuideTimeline / ChannelCard / ActionToolbar）
+│   │   ├── insights/           # 职业洞察组件（TrendCard / EmergingHustleCard / CareerAnalysisCard）（新增）
 │   │   ├── layout/             # 布局（Header / Footer）
-│   │   ├── questionnaire/      # 问卷组件（SkillSelect / SliderGroup / RadioCard）
-│   │   └── results/            # 结果页组件（PlanCard / MatchScoreRing / EmptyState / ChannelsOverview）
-│   ├── hooks/                  # useGenerate / useFavorite / useLocalStorage
-│   ├── pages/                  # QuestionnairePage / ResultsPage / DetailPage
-│   ├── services/               # api.ts（前端 API 调用）
+│   │   ├── questionnaire/      # 问卷组件（SkillSelect / SliderGroup / RadioCard / CareerBrowserLink）
+│   │   ├── results/            # 结果页组件（PlanCard / MatchScoreRing / EmptyState / ChannelsOverview）
+│   │   └── tree/               # 发展路径树组件（SideHustleTreeGraph / SideHustleTreeSection）（新增）
+│   ├── hooks/                  # useGenerate / useFavorite / useLocalStorage / useCareerInsights / useSideHustleTree
+│   ├── pages/                  # QuestionnairePage / ResultsPage / DetailPage / CareerBrowserPage / CareerInsightsPage
+│   ├── services/               # api.ts / careerApi.ts（前端 API 调用）
 │   ├── store/                  # appStore / favoriteStore（zustand）
-│   ├── types/                  # 前端类型定义
-│   ├── constants/              # 问卷题目配置
+│   ├── types/                  # 前端类型定义（index.ts / career.ts）
+│   ├── constants/              # 问卷题目配置（questionnaire.ts）/ 职业分类数据（careers.ts）
 │   └── styles/                 # 全局样式
 ├── vercel.json                 # Vercel 部署配置
 └── package.json

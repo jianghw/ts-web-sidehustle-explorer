@@ -8,8 +8,10 @@
 import { useEffect } from 'react'
 // useNavigate 用于跳转；ArrowLeft 用于返回按钮
 import { useNavigate } from 'react-router-dom'
-// ArrowLeft（左箭头）、RefreshCw（刷新，用于"换一批"）
-import { ArrowLeft, RefreshCw } from 'lucide-react'
+// ArrowLeft（左箭头）、RefreshCw（刷新，用于"换一批"）、TrendingUp（趋势，用于"职业洞察"入口）
+import { ArrowLeft, RefreshCw, TrendingUp } from 'lucide-react'
+// Link 用于无刷新跳转到职业洞察页
+import { Link } from 'react-router-dom'
 // 引入全局状态仓库，读取用户画像和已生成的方案
 import { useAppStore } from '@/store/appStore'
 // 引入生成方案的自定义 Hook，提供 generate 方法及 loading/error 状态
@@ -98,10 +100,16 @@ export function ResultsPage() {
           <h1 className="text-xl font-bold text-slate-800">你的副业方案</h1>
           <p className="mt-1 text-sm text-slate-400">AI 为你生成了 {plans.length} 个方向，点击查看详情</p>
         </div>
-        {/* "换一批"：基于同一画像重新生成；刷新中禁用按钮并让图标旋转 */}
-        <button onClick={handleRetry} disabled={loading} className="btn-ghost">
-          <RefreshCw size={16} className={loading ? 'animate-spin' : ''} /> 换一批
-        </button>
+        <div className="flex items-center gap-2">
+          {/* 职业洞察入口：跳转到 AI 趋势分析页，查看行业趋势和新型副业预测 */}
+          <Link to="/insights" className="btn-ghost">
+            <TrendingUp size={16} /> 职业洞察
+          </Link>
+          {/* "换一批"：基于同一画像重新生成；刷新中禁用按钮并让图标旋转 */}
+          <button onClick={handleRetry} disabled={loading} className="btn-ghost">
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} /> 换一批
+          </button>
+        </div>
       </div>
 
       {/* 三列网格展示方案卡片，点击进入详情页 */}
