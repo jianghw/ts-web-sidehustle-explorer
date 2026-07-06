@@ -1,8 +1,24 @@
+/**
+ * @file prompt.ts —— AI 提示词（Prompt）构建
+ * @description 把发给豆包 AI 的提示词集中管理在这里。
+ *              提示词工程是大模型应用的核心：同样的模型，提示词写得好坏直接决定输出质量。
+ *              这里分为 system prompt（定义 AI 角色和输出格式）和 user prompt（注入用户信息）两部分。
+ */
+
+// 引入用户画像类型，用于约束 buildUserPrompt 的参数类型
 import type { Profile } from './types'
 
 /**
- * System Prompt：定义 AI 角色与输出结构规范
- * 决定方案质量的核心，3 个方案需差异化（稳赚型/成长型/爆发型）
+ * 构建 System Prompt（系统提示词）
+ *
+ * 系统提示词的作用：在对话开始前给 AI 设定"人设"和"规则"，
+ * 告诉它你是谁、要做什么、必须按什么格式输出。
+ * 这里设定 AI 为"资深副业规划师"，并严格规定了输出的 JSON 结构。
+ *
+ * 为什么不用代码生成 JSON 模板：直接把完整结构写在提示词里，AI 更容易遵循，
+ * 而且字段含义一目了然，便于后续调整。
+ *
+ * @returns 系统提示词字符串
  */
 export function buildSystemPrompt(): string {
   return `你是一位资深副业规划师，熟悉中国市场的灵活就业与副业生态。你的任务是根据用户画像，生成 3 个最适合其个性化条件的副业方向。
@@ -42,15 +58,26 @@ export function buildSystemPrompt(): string {
 }
 
 /**
- * User Prompt：把用户画像拼装成结构化输入
+ * 构建 User Prompt（用户提示词）
+ *
+ * 用户提示词的作用：把用户在前端填写的具体信息（技能、时间、预算等）
+ * 用自然语言拼装成 AI 能理解的一段话，让 AI 据此生成个性化方案。
+ *
+ * 为什么要把枚举值映射成中文描述：前端存的是 low/medium/high 这种英文代码值，
+ * 直接发给 AI 它可能理解不准，翻译成"稳健型""平衡型""进取型"更符合 AI 的训练语料习惯。
+ *
+ * @param profile 用户画像数据
+ * @returns 用户提示词字符串
  */
 export function buildUserPrompt(profile: Profile): string {
+  // 风险偏好的中英文映射表。用映射表而非 if-else，扩展新选项时只需加一行
   const riskMap: Record<string, string> = {
     low: '稳健型（低风险、回本快、不囤货）',
     medium: '平衡型（适度投入、有成长空间）',
     high: '进取型（可接受前期投入和较长回报周期）',
   }
 
+  // 把技能数组拼接成中文顿号分隔的字符串；如果用户没选技能，给个默认文案避免空值
   const skillsText = profile.skills.length > 0 ? profile.skills.join('、') : '暂无明确技能'
 
   return `请根据以下用户画像生成 3 个个性化副业方案：

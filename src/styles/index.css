@@ -1,52 +1,86 @@
+/**
+ * 文件用途：全局样式表。
+ * 引入 Tailwind CSS 工具类，并定义一些在整个应用中反复使用的通用样式
+ * （比如按钮、卡片、标签的统一样式），让各个页面保持一致的视觉风格。
+ */
+
+/* 引入 Tailwind CSS 的三个核心层：
+   - base：基础样式重置（比如统一各浏览器默认 margin、字体等）
+   - components：组件级样式（可在此用 @apply 组合工具类，定义复用样式）
+   - utilities：工具类（如 flex、p-4、text-sm 等，直接在 HTML 中使用）
+   必须按此顺序引入，否则样式优先级可能出问题 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* base 层：设置全站基础样式，所有页面生效 */
 @layer base {
   html {
+    /* 字体平滑处理：让文字在 Mac 和 Windows 上显示得更清晰、不锯齿 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   body {
+    /* 设置全站背景色为浅灰、文字为深色、使用无衬线字体，保证整体视觉清爽统一 */
     @apply bg-slate-50 text-slate-900 font-sans;
   }
 }
 
+/* components 层：定义可复用的组件样式类，供多个页面共用 */
 @layer components {
+  /* 主按钮：用于最重要的操作（如"生成方案"按钮）。
+     使用品牌紫色、圆角、阴影，悬停变深、按下缩小，禁用时半透明且禁用光标 */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
+  /* 幽灵按钮（次要按钮）：用于次要操作（如"返回"、"再试一次"）。
+     白底带边框，悬停变浅灰，视觉上比主按钮弱化，不抢主按钮的注意力 */
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50;
   }
+  /* 卡片容器：用于包裹内容块（如方案卡片）。
+     大圆角 + 边框 + 白底 + 阴影，让内容块看起来像一个浮起的卡片 */
   .card {
     @apply rounded-2xl border border-slate-200 bg-white shadow-card;
   }
+  /* 标签：用于显示分类标签（如"低门槛"、"高收益"等小标签）。
+     全圆角胶囊形状，小号字体，常配合背景色使用 */
   .tag {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
 }
 
-/* 自定义 range slider 样式 */
+/* ============================================================
+   自定义 range slider（滑动条）样式
+   问卷中的"每天能投入多少时间"用到滑动条。
+   默认的滑动条各浏览器样式不一且较丑，这里统一美化。
+   ============================================================ */
+
+/* 滑动条轨道（长长的横条）部分 */
 input[type='range'] {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  border-radius: 9999px;
-  background: #e2e8f0;
-  outline: none;
+  -webkit-appearance: none;   /* 去除浏览器默认外观（WebKit 内核，如 Chrome/Safari） */
+  appearance: none;            /* 标准属性：去除默认外观 */
+  height: 6px;                 /* 轨道高度 */
+  border-radius: 9999px;       /* 完全圆角，让轨道两端呈圆弧 */
+  background: #e2e8f0;         /* 轨道背景色：浅灰 */
+  outline: none;               /* 去除聚焦时的外边框，避免视觉干扰 */
 }
+
+/* 滑动条上的圆形滑块（可拖动的小圆点）—— WebKit 内核浏览器（Chrome/Safari/Edge） */
 input[type='range']::-webkit-slider-thumb {
-  -webkit-appearance: none;
+  -webkit-appearance: none;   /* 去除默认滑块外观 */
   appearance: none;
-  width: 22px;
+  width: 22px;                 /* 滑块直径 */
   height: 22px;
-  border-radius: 9999px;
-  background: #7c4dff;
-  cursor: pointer;
-  border: 3px solid #fff;
-  box-shadow: 0 1px 4px rgb(124 77 255 / 0.4);
+  border-radius: 9999px;       /* 圆形 */
+  background: #7c4dff;         /* 滑块颜色：品牌紫色 */
+  cursor: pointer;             /* 鼠标悬停时显示手型，提示可拖动 */
+  border: 3px solid #fff;      /* 白色描边，让滑块在轨道上更醒目 */
+  box-shadow: 0 1px 4px rgb(124 77 255 / 0.4);  /* 紫色柔和阴影，增加立体感 */
 }
+
+/* 滑动条上的圆形滑块 —— Firefox 浏览器
+   注意：Firefox 使用 -moz-range-thumb，与 WebKit 不同，需要单独写 */
 input[type='range']::-moz-range-thumb {
   width: 22px;
   height: 22px;

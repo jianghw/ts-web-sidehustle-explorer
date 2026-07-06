@@ -1,8 +1,21 @@
+/**
+ * @file mock.ts —— Mock 假数据
+ * @description 当豆包 API Key 未配置（如本地开发、演示场景）时，返回这些预先写好的假数据，
+ *              让前端可以正常展示效果，不依赖真实 AI 调用。
+ *              生产环境配置了 API Key 后不会走到这里。
+ */
+
+// 引入方案类型定义，确保 mock 数据的结构和真实数据完全一致
 import type { Plan } from './types'
 
 /**
- * Mock 方案数据，用于 API Key 未配置时的本地开发验证。
- * 生产环境不会使用。
+ * 获取 mock 假数据方案列表
+ *
+ * 为什么需要 mock：1) 本地开发时不需要消耗 AI 额度；2) 演示Demo时保证效果稳定；
+ * 3) 当 AI 接口出问题时也能有兜底数据展示，不至于白屏。
+ * mock 数据的结构必须和真实 AI 返回的完全一致，这样前端无需区分真假数据。
+ *
+ * @returns 3 个预置的副业方案
  */
 export function getMockPlans(): Plan[] {
   return [
