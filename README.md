@@ -51,7 +51,7 @@ npm run dev:all
 
 本项目部署在 Vercel 上，生产访问地址：<https://traework-one.vercel.app>
 
-已连接的 GitHub 仓库：<https://github.com/jianghw/web-app-side-hustle-explorer>
+已连接的 GitHub 仓库：<https://github.com/jianghw/ts-web-sidehustle-explorer>
 
 下面提供两种部署方式，任选其一即可。**如果你不太熟悉命令行，推荐使用方式一（GitHub 集成自动部署）**，配置一次后每次推送代码都会自动更新线上版本。
 
@@ -72,7 +72,7 @@ npm run dev:all
 **第 2 步：导入仓库**
 
 1. 登录后进入 Dashboard，点击「Add New...」→「Project」
-2. 在「Import Git Repository」列表中找到 `jianghw/web-app-side-hustle-explorer`
+2. 在「Import Git Repository」列表中找到 `jianghw/ts-web-sidehustle-explorer`
    - 如果列表里没有，点击「Adjust GitHub App Permissions」授权 Vercel 访问该仓库
 3. 点击「Import」导入项目
 
